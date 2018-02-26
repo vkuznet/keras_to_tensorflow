@@ -130,7 +130,8 @@ sess = K.get_session()
 if args.graph_def:
     f = args.output_graphdef_file 
     tf.train.write_graph(sess.graph.as_graph_def(), output_fld, f, as_text=True)
-    print('saved the graph definition in ascii format at: ', str(Path(output_fld) / f))
+    print('saved the graph definition in ascii format at: %s' %\
+            os.path.join(output_fld, f))
 
 
 # convert variables to constants and save
@@ -146,6 +147,10 @@ if args.quantize:
     constant_graph = graph_util.convert_variables_to_constants(sess, transformed_graph_def, pred_node_names)
 else:
     constant_graph = graph_util.convert_variables_to_constants(sess, sess.graph.as_graph_def(), pred_node_names)    
-graph_io.write_graph(constant_graph, output_fld, args.output_model_file, as_text=False)
-print('saved the freezed graph (ready for inference) at: ', str(Path(output_fld) / args.output_model_file))
+as_text = False
+if args.output_model_file.endswith('pbtxt'):
+    as_text = True
+graph_io.write_graph(constant_graph, output_fld, args.output_model_file, as_text=as_text)
+print('saved the freezed graph (ready for inference) at: %s ' %\
+        os.path.join(output_fld, args.output_model_file))
 
