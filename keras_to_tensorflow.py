@@ -1,7 +1,5 @@
-
+#!/usr/bin/env python
 # coding: utf-8
-
-# In[ ]:
 
 """
 Copyright (c) 2017, by the Authors: Amir H. Abdi
@@ -14,8 +12,6 @@ to the freezed .pb tensorflow weight file which holds both the
 network architecture and its associated weights.
 """;
 
-
-# In[ ]:
 
 '''
 Input arguments:
@@ -48,15 +44,11 @@ output_node_prefix: the prefix to use for output nodes. [default: output_node]
 
 '''
 
-
-# Parse input arguments
-
-# In[ ]:
-
+import os
 import argparse
 parser = argparse.ArgumentParser(description='set input arguments')
 parser.add_argument('-input_fld', action="store", 
-                    dest='input_fld', type=str, default='.')
+                    dest='input_fld', type=str, default=os.getcwd())
 parser.add_argument('-output_fld', action="store", 
                     dest='output_fld', type=str, default='')
 parser.add_argument('-input_model_file', action="store", 
@@ -90,14 +82,13 @@ if args.theano_backend is True and args.quantize is True:
 
 from keras.models import load_model
 import tensorflow as tf
-from pathlib import Path
 from keras import backend as K
 
 output_fld =  args.input_fld if args.output_fld == '' else args.output_fld
 if args.output_model_file == '':
-    args.output_model_file = str(Path(args.input_model_file).name) + '.pb'
-Path(output_fld).mkdir(parents=True, exist_ok=True)    
-weight_file_path = str(Path(args.input_fld) / args.input_model_file)
+    print("Please provide model file name via -output_mode_file, e.g. model.pb")
+    sys.exit(1)
+weight_file_path = os.path.join(args.input_fld, args.input_model_file)
 
 
 # Load keras model and rename output
